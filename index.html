@@ -8,10 +8,12 @@
       margin: 0;
       padding: 20px;
       text-align: center;
+      background-color: #f9f9f9;
     }
 
     h1 {
       margin-bottom: 20px;
+      color: #333333;
     }
 
     .coin-image {
@@ -23,6 +25,7 @@
       font-size: 24px;
       font-weight: bold;
       margin-bottom: 20px;
+      color: #333333;
     }
 
     .button {
@@ -53,9 +56,11 @@
 
       if (randomNum < 0.5) {
         resultText.textContent = 'Heads!';
+        resultText.style.color = '#2ecc71';
         coinImage.src = 'https://example.com/heads.png';
       } else {
         resultText.textContent = 'Tails!';
+        resultText.style.color = '#e74c3c';
         coinImage.src = 'https://example.com/tails.png';
       }
     }
