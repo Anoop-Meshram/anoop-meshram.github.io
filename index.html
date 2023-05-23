@@ -1,90 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Puzzle Game</title>
+  <title>Flip a Coin</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-    }
-
-    .game-container {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-
-    .puzzle-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-gap: 10px;
       margin-bottom: 20px;
     }
 
-    .puzzle-piece {
-      border: 1px solid #ccc;
-      background-color: #f2f2f2;
-      padding: 50px;
+    .coin-image {
+      width: 200px;
+      margin-bottom: 20px;
+    }
+
+    .result-text {
       font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #4287f5;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1>Puzzle Game</h1>
+  <h1>Flip a Coin</h1>
 
-  <div class="game-container">
-    <div class="puzzle-grid">
-      <div class="puzzle-piece" onclick="swapPieces(0, 1)">1</div>
-      <div class="puzzle-piece" onclick="swapPieces(1, 2)">2</div>
-      <div class="puzzle-piece" onclick="swapPieces(3, 4)">3</div>
-      <div class="puzzle-piece" onclick="swapPieces(4, 5)">4</div>
-      <div class="puzzle-piece" onclick="swapPieces(6, 7)">5</div>
-      <div class="puzzle-piece" onclick="swapPieces(7, 8)">6</div>
-      <div class="puzzle-piece" onclick="swapPieces(1, 4)">7</div>
-      <div class="puzzle-piece" onclick="swapPieces(2, 5)">8</div>
-      <div class="puzzle-piece" onclick="swapPieces(4, 7)">9</div>
-    </div>
-    <button onclick="resetGame()">Reset</button>
-  </div>
+  <img class="coin-image" src="https://example.com/coin.png" alt="Coin">
+
+  <p class="result-text"></p>
+
+  <button class="button" onclick="flipCoin()">Flip Coin</button>
 
   <script>
-    var pieces = Array.from(document.querySelectorAll('.puzzle-piece'));
-    var emptyIndex = 8;
+    function flipCoin() {
+      var resultText = document.querySelector('.result-text');
+      var coinImage = document.querySelector('.coin-image');
+      var randomNum = Math.random();
 
-    pieces.forEach((piece, index) => {
-      piece.style.order = index + 1;
-    });
-
-    function swapPieces(index1, index2) {
-      var tempOrder = pieces[index1].style.order;
-      pieces[index1].style.order = pieces[index2].style.order;
-      pieces[index2].style.order = tempOrder;
-
-      checkWin();
-    }
-
-    function checkWin() {
-      var currentOrder = pieces.map(piece => piece.style.order);
-      var sortedOrder = [...currentOrder].sort();
-
-      if (currentOrder.join('') === sortedOrder.join('')) {
-        alert('Congratulations! You solved the puzzle!');
+      if (randomNum < 0.5) {
+        resultText.textContent = 'Heads!';
+        coinImage.src = 'https://example.com/heads.png';
+      } else {
+        resultText.textContent = 'Tails!';
+        coinImage.src = 'https://example.com/tails.png';
       }
-    }
-
-    function resetGame() {
-      pieces.forEach((piece, index) => {
-        piece.style.order = index + 1;
-      });
     }
   </script>
 </body>
