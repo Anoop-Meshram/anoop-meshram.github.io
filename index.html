@@ -1,110 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ChatGPT Demo</title>
+  <title>Paint.io Game</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 0;
     }
 
-    .chat-container {
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      overflow: hidden;
-      height: 400px;
-    }
-
-    .message-container {
-      padding: 10px;
-      overflow-y: scroll;
-      height: 100%;
-    }
-
-    .user-message {
-      background-color: #f2f2f2;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-    }
-
-    .assistant-message {
-      background-color: #e2e2e2;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-    }
-
-    .input-container {
-      margin-top: 10px;
-    }
-
-    .input-container input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border: 1px solid #000000;
     }
   </style>
 </head>
 <body>
-  <h1>ChatGPT Demo</h1>
-
-  <div class="chat-container">
-    <div class="message-container" id="message-container">
-      <div class="assistant-message">
-        <p>Welcome to the ChatGPT Demo!</p>
-      </div>
-    </div>
-
-    <div class="input-container">
-      <input type="text" id="user-input" placeholder="Type your message..." autofocus>
-    </div>
-  </div>
+  <canvas id="canvas" width="800" height="600"></canvas>
 
   <script>
-    // Get the message container and user input elements
-    const messageContainer = document.getElementById('message-container');
-    const userInput = document.getElementById('user-input');
-
-    // Function to add a user message to the chat
-    function addUserMessage(message) {
-      const userMessage = document.createElement('div');
-      userMessage.classList.add('user-message');
-      userMessage.innerHTML = `<p>${message}</p>`;
-      messageContainer.appendChild(userMessage);
-    }
-
-    // Function to add an assistant message to the chat
-    function addAssistantMessage(message) {
-      const assistantMessage = document.createElement('div');
-      assistantMessage.classList.add('assistant-message');
-      assistantMessage.innerHTML = `<p>${message}</p>`;
-      messageContainer.appendChild(assistantMessage);
-    }
-
-    // Function to handle user input
-    function handleUserInput() {
-      const message = userInput.value;
-      addUserMessage(message);
-      userInput.value = ''; // Clear the input field
-
-      // Send user message to the server (backend) for processing
-      // Replace the following code with your own implementation
-
-      // Example response from the server (backend)
-      const response = 'This is the assistant\'s response.';
-
-      addAssistantMessage(response);
-    }
-
-    // Event listener for user input
-    userInput.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
-        handleUserInput();
-      }
-    });
+    // JavaScript code for the paint.io game functionality
+    // Add your game logic here
   </script>
 </body>
 </html>
