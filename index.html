@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Story Magazine</title>
+  <title>Puzzle Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,47 +13,79 @@
       text-align: center;
     }
 
-    .story {
-      margin-bottom: 30px;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 20px;
+    .game-container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
     }
 
-    .story-title {
+    .puzzle-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .puzzle-piece {
+      border: 1px solid #ccc;
+      background-color: #f2f2f2;
+      padding: 50px;
       font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .story-author {
-      color: #888888;
-      font-style: italic;
-      margin-bottom: 10px;
-    }
-
-    .story-content {
-      line-height: 1.6;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1>Story Magazine</h1>
+  <h1>Puzzle Game</h1>
 
-  <div class="story">
-    <h2 class="story-title">The Magical Key</h2>
-    <p class="story-author">By Jane Smith</p>
-    <p class="story-content">Once upon a time, in a small village nestled amidst rolling hills, there lived a young girl named Lily. Lily was known for her kind heart and adventurous spirit. She spent her days exploring the lush forests that surrounded her village.</p>
-    <p class="story-content">One sunny afternoon, while wandering through the woods, Lily stumbled upon an old, weathered key lying on a moss-covered stone. Intrigued by its intricate design and sense of mystery, she decided to keep it as a token of her discovery.</p>
-    <p class="story-content">Little did Lily know that this key held magical powers. It was said to unlock a hidden door that led to a realm of enchantment and wonder. Determined to uncover the truth, Lily embarked on a quest to find the secret door.</p>
-    <p class="story-content">Days turned into weeks, and weeks into months as Lily ventured through dense forests, treacherous mountains, and winding rivers. Along her journey, she encountered mythical creatures, solved perplexing riddles, and faced her deepest fears.</p>
-    <p class="story-content">Finally, after a long and arduous search, Lily discovered the hidden door nestled between towering ancient trees. With trembling hands, she inserted the key into the lock and turned it. The door creaked open, revealing a breathtaking world of magic.</p>
-    <p class="story-content">In this realm, Lily encountered fairies dancing on delicate petals, unicorns galloping through fields of wildflowers, and shimmering waterfalls cascading into crystal-clear lakes. It was a place where dreams came to life and impossibilities became possibilities.</p>
-    <p class="story-content">Lily spent endless days exploring the magical realm, learning its secrets, and forging friendships with its extraordinary inhabitants. She discovered her own hidden powers and embraced the limitless potential within her.</p>
-    <p class="story-content">As time passed, Lily realized that her true purpose was not only to unlock the door but to share the magic she had found. With a heavy heart, she bid farewell to the enchanting realm and returned to her village, carrying the key and memories of her extraordinary journey.</p>
-    <p class="story-content">From that day forward, Lily dedicated her life to spreading joy, wonder, and a belief in the extraordinary. She became known as the village storyteller, captivating young and old alike with tales of magic and the power of imagination.</p>
-    <p class="story-content">And so, the young girl with the magical key became a living legend, reminding everyone that within each of us lies the power to unlock our own extraordinary worlds.</p>
+  <div class="game-container">
+    <div class="puzzle-grid">
+      <div class="puzzle-piece" onclick="swapPieces(0, 1)">1</div>
+      <div class="puzzle-piece" onclick="swapPieces(1, 2)">2</div>
+      <div class="puzzle-piece" onclick="swapPieces(3, 4)">3</div>
+      <div class="puzzle-piece" onclick="swapPieces(4, 5)">4</div>
+      <div class="puzzle-piece" onclick="swapPieces(6, 7)">5</div>
+      <div class="puzzle-piece" onclick="swapPieces(7, 8)">6</div>
+      <div class="puzzle-piece" onclick="swapPieces(1, 4)">7</div>
+      <div class="puzzle-piece" onclick="swapPieces(2, 5)">8</div>
+      <div class="puzzle-piece" onclick="swapPieces(4, 7)">9</div>
+    </div>
+    <button onclick="resetGame()">Reset</button>
   </div>
 
-  <!-- Add more stories -->
+  <script>
+    var pieces = Array.from(document.querySelectorAll('.puzzle-piece'));
+    var emptyIndex = 8;
 
+    pieces.forEach((piece, index) => {
+      piece.style.order = index + 1;
+    });
+
+    function swapPieces(index1, index2) {
+      var tempOrder = pieces[index1].style.order;
+      pieces[index1].style.order = pieces[index2].style.order;
+      pieces[index2].style.order = tempOrder;
+
+      checkWin();
+    }
+
+    function checkWin() {
+      var currentOrder = pieces.map(piece => piece.style.order);
+      var sortedOrder = [...currentOrder].sort();
+
+      if (currentOrder.join('') === sortedOrder.join('')) {
+        alert('Congratulations! You solved the puzzle!');
+      }
+    }
+
+    function resetGame() {
+      pieces.forEach((piece, index) => {
+        piece.style.order = index + 1;
+      });
+    }
+  </script>
 </body>
 </html>
