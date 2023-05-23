@@ -1,27 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Paint.io Game</title>
+  <title>Colorful Website with Animation and Video</title>
   <style>
     body {
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #f2f2f2;
     }
 
-    canvas {
-      display: block;
+    header {
+      background-color: #222222;
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 40px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
       margin: 0 auto;
-      background-color: #ffffff;
-      border: 1px solid #000000;
+      padding: 20px;
+    }
+
+    .video-container {
+      position: relative;
+      overflow: hidden;
+      padding-top: 56.25%;
+      margin-bottom: 20px;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .animated-element {
+      background-color: #ff69b4;
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      animation: rainbow 5s infinite;
+    }
+
+    @keyframes rainbow {
+      0% { background-color: #ff69b4; }
+      20% { background-color: #ff8c00; }
+      40% { background-color: #ffff00; }
+      60% { background-color: #7cfc00; }
+      80% { background-color: #00bfff; }
+      100% { background-color: #9932cc; }
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas" width="800" height="600"></canvas>
+  <header>
+    <h1>Colorful Website with Animation and Video</h1>
+  </header>
+
+  <div class="container">
+    <div class="video-container">
+      <!-- Replace the src attribute with the URL of your video file -->
+      <iframe src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <div class="animated-element">
+      <h2>Welcome to the Colorful Website!</h2>
+      <p>This element has a rainbow animation.</p>
+    </div>
+
+    <!-- Add more colorful and animated elements -->
+
+  </div>
 
   <script>
-    // JavaScript code for the paint.io game functionality
-    // Add your game logic here
+    // Add any JavaScript code for interactivity or further animations here
   </script>
 </body>
 </html>
