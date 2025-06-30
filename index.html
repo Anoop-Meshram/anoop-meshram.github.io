@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Anoop Meshram - Civil Engineer</title>
   <style>
     body {
-      font-family: 'Courier New', monospace;
       background-color: black;
-      color: limegreen;
-      padding: 20px;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 40px;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 800px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      border-left: 4px solid #00ff00;
+      padding-left: 20px;
       animation: fadeIn 2s ease-out;
     }
 
@@ -17,72 +26,69 @@
       to { opacity: 1; }
     }
 
-    h1, h2, h3 {
-      color: #00ff00;
-      margin-bottom: 10px;
+    .typewriter {
+      display: inline-block;
+      border-right: 2px solid #00ff00;
+      animation: blink 1s infinite step-end;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
-    p, ul {
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
-    a {
-      color: #39ff14;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    ul {
-      list-style-type: square;
-      padding-left: 20px;
+    @keyframes blink {
+      from, to { border-color: transparent; }
+      50% { border-color: #00ff00; }
     }
   </style>
 </head>
 <body>
-  <h1>Anoop Meshram</h1>
-  <h2>Civil Engineer</h2>
+  <div class="container">
+    <div id="text" class="typewriter"></div>
+  </div>
 
-  <p><strong>Email:</strong> <a href="mailto:anoop@example.com">anoop@example.com</a></p>
+  <script>
+    const content = `
+Anoop Meshram
+Civil Engineer
 
-  <h3>Website Links:</h3>
-  <ul>
-    <li><a href="https://shorturl.at/Xr5fp" target="_blank">Portfolio Short URL</a></li>
-    <li><a href="https://www.canva.com/design/DAGSagYrFso/ZmSPg99QP5Q4ifUTX5TP_w/view" target="_blank">Canva Presentation</a></li>
-  </ul>
+Email: anoop@example.com
+Phone: +1 123-456-7890
 
-  <h3>Download PPT:</h3>
-  <ul>
-    <li><a href="https://shorturl.at/ATYcQ" target="_blank">Short PPT Link</a></li>
-    <li><a href="https://drive.google.com/drive/folders/1Hd8AwvpHxqMXCFBB8HJoxyHhLNcXR-1v" target="_blank">Google Drive Folder</a></li>
-  </ul>
+Portfolio Links:
+- https://shorturl.at/Xr5fp
+- https://www.canva.com/design/DAGSagYrFso/ZmSPg99QP5Q4ifUTX5TP_w/view
 
-  <p><strong>Phone:</strong> +1 123-456-7890</p>
+Download PPT:
+- https://shorturl.at/ATYcQ
+- https://drive.google.com/drive/folders/1Hd8AwvpHxqMXCFBB8HJoxyHhLNcXR-1v
 
-  <h2>Profile</h2>
-  <p>I am a highly skilled and motivated Civil Engineer with a passion for designing and constructing structures that improve people's lives. With expertise in various aspects of civil engineering, including structural analysis, project management, and sustainability, I have successfully delivered projects of varying scales and complexities.</p>
+Profile:
+I am a highly skilled and motivated Civil Engineer with a passion for designing
+structures that improve lives. I specialize in structural analysis, project
+management, and sustainable design.
 
-  <h2>Experience</h2>
-  <h3>Senior Civil Engineer, ABC Engineering Firm</h3>
-  <p>Responsible for overseeing the design and construction of commercial and residential buildings. Led a team of engineers and collaborated with architects, contractors, and clients to ensure project success.</p>
+Experience:
+- Senior Engineer at ABC Engineering Firm
+- Junior Engineer at XYZ Construction Company
 
-  <h3>Junior Civil Engineer, XYZ Construction Company</h3>
-  <p>Assisted in infrastructure project designs including roads, bridges, and water systems. Performed site visits, structural analysis, and prepared drawings and reports.</p>
+Skills:
+- Structural Design | AutoCAD | Project Management | Communication
 
-  <h2>Education</h2>
-  <h3>Bachelor of Engineering in Civil Engineering, University of XYZ</h3>
-  <p>Graduated with honors, specializing in structural engineering and sustainable design.</p>
+Website made with 💻 & a terminal vibe.
+`;
 
-  <h2>Skills</h2>
-  <ul>
-    <li>Structural analysis and design</li>
-    <li>Project management</li>
-    <li>AutoCAD and design software</li>
-    <li>Problem-solving abilities</li>
-    <li>Communication skills</li>
-  </ul>
+    let i = 0;
+    const speed = 20;
+    const textEl = document.getElementById("text");
+
+    function typeWriter() {
+      if (i < content.length) {
+        textEl.textContent += content.charAt(i);
+        i++;
+        setTimeout(typeWriter, speed);
+      }
+    }
+
+    window.onload = typeWriter;
+  </script>
 </body>
 </html>
