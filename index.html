@@ -1,58 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Anoop Meshram - Civil Engineer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to My GitHub Page</title>
   <style>
     body {
-      font-family: 'Courier New', monospace;
-      background-color: black;
-      color: limegreen;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    h1, h2 {
-      margin-bottom: 10px;
+    .container {
+      text-align: center;
+      animation: fadeIn 2s ease-out forwards;
+      opacity: 0;
     }
 
-    p {
-      margin-bottom: 20px;
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0.5em;
+    }
+
+    .typing {
+      font-size: 1.5em;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 3px solid white;
+      width: 0;
+      animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+      to {
+        width: 20ch;
+      }
+    }
+
+    @keyframes blink {
+      50% {
+        border-color: transparent;
+      }
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9em;
+      color: #ccc;
     }
   </style>
 </head>
 <body>
-  <h1>Anoop Meshram</h1>
-  <h2>Civil Engineer</h2>
-
-  <p>Email: anoop@example.com</p>
-  <p>Website: Click below links</p>
-  https://shorturl.at/Xr5fp</p>
-  https://www.canva.com/design/DAGSagYrFso/ZmSPg99QP5Q4ifUTX5TP_w/view</p>
-  <p>Download PPT: Click below links</p>
-  https://shorturl.at/ATYcQ</p>
-  https://drive.google.com/drive/folders/1Hd8AwvpHxqMXCFBB8HJoxyHhLNcXR-1v</p>
-  <p>Phone: +1 123-456-7890</p>
-
-  <h2>Profile</h2>
-  <p>I am a highly skilled and motivated Civil Engineer with a passion for designing and constructing structures that improve people's lives. With expertise in various aspects of civil engineering, including structural analysis, project management, and sustainability, I have successfully delivered projects of varying scales and complexities.</p>
-
-  <h2>Experience</h2>
-  <h3>Senior Civil Engineer, ABC Engineering Firm</h3>
-  <p>Responsible for overseeing the design and construction of commercial and residential buildings. Led a team of engineers and collaborated with architects, contractors, and clients to ensure project success. Managed project budgets, timelines, and quality control measures.</p>
-
-  <h3>Junior Civil Engineer, XYZ Construction Company</h3>
-  <p>Assisted in the design and development of infrastructure projects, including roads, bridges, and water supply systems. Conducted site visits, performed structural analysis, and prepared engineering drawings and reports.</p>
-
-  <h2>Education</h2>
-  <h3>Bachelor of Engineering in Civil Engineering, University of XYZ</h3>
-  <p>Graduated with honors. Specialized in structural engineering and sustainable design principles.</p>
-
-  <h2>Skills</h2>
-  <ul>
-    <li>Structural analysis and design</li>
-    <li>Project management</li>
-    <li>AutoCAD and other design software</li>
-    <li>Strong problem-solving abilities</li>
-    <li>Excellent communication skills</li>
-  </ul>
+  <div class="container">
+    <h1>Hello, I'm [Your Name]</h1>
+    <div class="typing">Welcome to my GitHub Page!</div>
+  </div>
+  <footer>
+    © 2025 [Your Name]
+  </footer>
 </body>
 </html>
