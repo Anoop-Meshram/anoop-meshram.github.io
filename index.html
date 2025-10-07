@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Time-based Greeting</title>
+  <style>
+    :root{
+      --glass-bg: rgba(255,255,255,0.08);
+      --glass-border: rgba(255,255,255,0.12);
+      --radius: 16px;
+      --max-width: 900px;
+      color-scheme: light dark;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(135deg,#0f172a 0%, #001219 50%, #06202a 100%);
+      min-height:100vh;
+      color: #fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .card{
+      width:clamp(300px,85%, var(--max-width));
+      padding:2rem;
+      border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border:1px solid var(--glass-border);
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+      backdrop-filter: blur(8px) saturate(120%);
+      text-align:center;
+    }
+
+    .emoji{
+      font-size:64px;
+      display:block;
+      margin-bottom:0.25rem;
+      transform:translateY(0);
+      transition:transform 300ms ease;
+    }
+
+    h1{
+      margin:0;
+      font-weight:700;
+      font-size:clamp(1.25rem, 2.5vw, 2rem);
+      letter-spacing:-0.02em;
+    }
+
+    p.sub{
+      margin:0.5rem 0 1rem 0;
+      opacity:0.9;
+      font-size:clamp(0.9rem, 1.6vw, 1.05rem);
+    }
+
+    .time{
+      font-variant-numeric:tabular-nums;
+      font-size:1.25rem;
+      margin-top:0.75rem;
+      display:inline-block;
+      padding:0.45rem 0.8rem;
+      border-radius:999px;
+      background:var(--glass-bg);
+      border:1px solid rgba(255,255,255,0.04);
+    }
+
+    .controls{
+      margin-top:1.25rem;
+      display:flex;
+      gap:0.5rem;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    button{
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.08);
+      color:inherit;
+      padding:0.5rem 0.8rem;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:600;
+      transition: all 180ms ease;
+    }
+    button:hover{transform:translateY(-3px);filter:brightness(1.05)}
+
+    footer{margin-top:1.25rem; font-size:0.8rem; opacity:0.7}
+
+    /* Dynamic accent backgrounds for time of day */
+    .morning{background:linear-gradient(135deg,#fff7cc11,#ffecd611);}
+    .afternoon{background:linear-gradient(135deg,#ffefd511,#ffd6a111);}
+    .evening{background:linear-gradient(135deg,#e9d3ff11,#c2b3ff11);}
+    .night{background:linear-gradient(135deg,#0b122211,#00142811);}
+
+    @media (prefers-color-scheme: light){
+      body{color:#0b1224;background:linear-gradient(135deg,#f0f6ff,#e9f0ff)}
+      .card{color:inherit;background:rgba(255,255,255,0.85);border:1px solid rgba(12,18,48,0.06)}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" id="greetingCard" role="main" aria-live="polite">
+    <div class="emoji" id="emoji">👋</div>
+    <h1 id="greeting">Hello there —</h1>
+    <p class="sub" id="message">Welcome! The page detects your local time and shows a friendly greeting.</p>
+
+    <div class="time" id="clock" aria-hidden="false">--:-- --</div>
+
+    <div class="controls">
+      <button id="toggleSeconds" title="Toggle seconds">Show seconds</button>
+      <button id="forceUpdate" title="Immediately update greeting">Refresh greeting</button>
+    </div>
+
+    <footer>Local time will be used to determine Morning / Afternoon / Evening / Night.
+    </footer>
+  </main>
+
+  <script>
+    // Configuration:define hours ranges (24-hour clock)
+    const ranges = {
+      morning: {start: 5, end: 12},       // 5:00 — 11:59
+      afternoon: {start: 12, end: 17},    // 12:00 — 16:59
+      evening: {start: 17, end: 21},      // 17:00 — 20:59
+      night: {start: 21, end: 24},        // 21:00 — 23:59
+      nightEarly: {start: 0, end: 5}      // 00:00 — 04:59
+    };
+
+    const emojiMap = {
+      morning: '🌅',
+      afternoon: '☀️',
+      evening: '🌇',
+      night: '🌙'
+    };
+
+    const greetingMap = {
+      morning: 'Good Morning',
+      afternoon: 'Good Afternoon',
+      evening: 'Good Evening',
+      night: 'Good Night'
+    };
+
+    const messageMap = {
+      morning: 'Rise and shine — enjoy your day!',
+      afternoon: 'Hope your afternoon is going great!',
+      evening: 'Relax and enjoy your evening!',
+      night: 'Time to wind down — have a peaceful night.'
+    };
+
+    // Elements
+    const greetingEl = document.getElementById('greeting');
+    const messageEl = document.getElementById('message');
+    const emojiEl = document.getElementById('emoji');
+    const clockEl = document.getElementById('clock');
+    const cardEl = document.getElementById('greetingCard');
+    const toggleSecondsBtn = document.getElementById('toggleSeconds');
+    const forceUpdateBtn = document.getElementById('forceUpdate');
+
+    let showSeconds = false;
+
+    // Determine which range the hour is in
+    function getPeriod(hour){
+      if(hour >= ranges.morning.start && hour < ranges.morning.end) return 'morning';
+      if(hour >= ranges.afternoon.start && hour < ranges.afternoon.end) return 'afternoon';
+      if(hour >= ranges.evening.start && hour < ranges.evening.end) return 'evening';
+      // night includes late night and early morning
+      return 'night';
+    }
+
+    function formatTime(date){
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      let seconds = date.getSeconds();
+      let ampm = hours >= 12 ? 'PM' : 'AM';
+      let displayHour = hours % 12;
+      displayHour = displayHour === 0 ? 12 : displayHour;
+      const two = v => String(v).padStart(2,'0');
+      return {
+        pretty: `${displayHour}:${two(minutes)} ${ampm}`,
+        prettyWithSeconds: `${displayHour}:${two(minutes)}:${two(seconds)} ${ampm}`
+      };
+    }
+
+    function updateGreeting(now = new Date()){
+      const hour = now.getHours();
+      const period = getPeriod(hour);
+
+      // Set texts
+      greetingEl.textContent = `Hello there — ${greetingMap[period]}!`;
+      messageEl.textContent = messageMap[period];
+      emojiEl.textContent = emojiMap[period];
+
+      // update card class for background accent
+      cardEl.classList.remove('morning','afternoon','evening','night');
+      cardEl.classList.add(period);
+
+      // update clock
+      const t = formatTime(now);
+      clockEl.textContent = showSeconds ? t.prettyWithSeconds : t.pretty;
+
+      // accessibility:announce
+      cardEl.setAttribute('aria-label', `${greetingMap[period]}. ${messageMap[period]}. Current time: ${clockEl.textContent}`);
+
+      // micro animation
+      emojiEl.style.transform = 'translateY(-6px)';
+      setTimeout(()=> emojiEl.style.transform = 'translateY(0)', 250);
+    }
+
+    // Initialize
+    updateGreeting();
+
+    // Update every second if seconds shown, else update every 30s to keep clock reasonably accurate and efficient
+    let intervalId = null;
+    function startTicker(){
+      if(intervalId) clearInterval(intervalId);
+      const delay = showSeconds ? 1000 : 30000;
+      intervalId = setInterval(()=> updateGreeting(new Date()), delay);
+    }
+
+    startTicker();
+
+    // Buttons
+    toggleSecondsBtn.addEventListener('click', ()=>{
+      showSeconds = !showSeconds;
+      toggleSecondsBtn.textContent = showSeconds ? 'Hide seconds' : 'Show seconds';
+      updateGreeting(new Date());
+      startTicker();
+    });
+
+    forceUpdateBtn.addEventListener('click', ()=> updateGreeting(new Date()));
+
+    // Keep greeting in sync if user changes system clock or timezones (visibilitychange helps when switching tabs)
+    window.addEventListener('visibilitychange', ()=> {
+      if(!document.hidden) updateGreeting(new Date());
+    });
+
+    // If user's locale is not en-US you might want to offer localization — here's a tiny hint for extension:
+    // Intl.DateTimeFormat(navigator.language, { hour: 'numeric', minute:'numeric' }).format(new Date())
+
+    // For immediate first paint show the actual time and period
+    (function immediateUpdate(){ updateGreeting(new Date()); })();
+  </script>
+</body>
+</html>
