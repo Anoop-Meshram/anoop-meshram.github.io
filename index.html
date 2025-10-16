@@ -17,17 +17,16 @@
       margin: 0;
       transition: background 1s ease;
     }
-    h1 { font-size: 2.2rem; margin-bottom: 10px; }
-    h2 { font-size: 1.5rem; margin: 5px 0; }
-    p { font-size: 1.1rem; margin: 8px 0; }
+    h1 { font-size: 2rem; margin-bottom: 10px; }
+    h2 { font-size: 1rem; margin: 5px 0; }
+    p { font-size: 0.5rem; margin: 8px 0; }
     .time { font-weight: bold; color: #1e3a8a; }
-    .footer { margin-top: 25px; font-size: 1rem; color: #444; }
+    .footer { margin-top: 25px; font-size: 0.5rem; color: #444; }
   </style>
 </head>
 <body>
   <div>
-    <h1 id="greeting">Hiii Dear!
-    </h1>
+    <h1 id="greeting">Hi Dear!</h1>
     <h2 id="message">Welcome!</h2>
     <p id="time"></p>
     <p id="location">Fetching your location...</p>
@@ -79,8 +78,7 @@
       else if (hour < 17) greeting = 'Good Afternoon 🌤️';
       else if (hour < 21) greeting = 'Good Evening 🌆';
       else greeting = 'Good Night 🌙';
-      greetingEl.textContent = `Hiii Dear, 
-      ${greeting}`;
+      greetingEl.textContent = `Hi Dear, ${greeting}`;
       timeEl.textContent = 'Local Time: ' + now.toLocaleTimeString();
     }
 
