@@ -3,291 +3,311 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Roaming Insects — Mosquito, Spider & Bugs</title>
+<title>LinkedIn Text Styler — Bold, Italic, Fancy Text for Posts</title>
 <style>
-  :root{
-    --bg:#0b1220; --panel:#0f1724; --muted:#9aa6b2; --accent:#22c55e;
-  }
+  :root{--bg:#f3f6f9;--card:#ffffff;--muted:#6b7280;--accent:#2563eb;--accent2:#7c3aed}
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#e6eef6;background:linear-gradient(180deg,#071026 0%, #0b1220 100%)}
-  .app{min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:28px}
-  .card{width:1000px;max-width:96%;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 12px 40px rgba(2,6,23,0.6)}
-  header{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px}
-  h1{font-size:18px;margin:0}
-  .controls{display:flex;gap:8px;align-items:center}
-  .controls button, .controls input, .controls select{padding:8px 10px;border-radius:8px;border:0;background:#0b2540;color:#e6eef6;cursor:pointer}
-  .controls .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#f6f9ff,#f3f6f9);color:#0f1724;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+  .wrap{width:1000px;max-width:98%}
+  .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 14px 40px rgba(8,15,30,0.08);border:1px solid rgba(2,6,23,0.04)}
+  header{display:flex;align-items:center;justify-content:space-between}
+  h1{margin:0;font-size:20px}
+  p.lead{margin:6px 0 0;color:var(--muted)}
 
-  .stage{position:relative;height:560px;border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#061426,#05111a);border:1px solid rgba(255,255,255,0.03)}
-  .hud{position:absolute;left:12px;top:12px;background:rgba(0,0,0,0.25);padding:8px;border-radius:8px;color:var(--muted);font-size:13px}
-
-  /* insect base style */
-  .insect{position:absolute;will-change:transform,opacity;transform-origin:center center;user-select:none}
-  .insect .body{display:block}
-  .insect.dead{opacity:0.35;filter:grayscale(60%);pointer-events:none}
-
-  /* simple SVG sizes */
-  .insect.size-sm{width:26px;height:26px}
-  .insect.size-md{width:40px;height:40px}
-  .insect.size-lg{width:56px;height:56px}
-
-  /* splat animation */
-  .splat{position:absolute;pointer-events:none;transform-origin:center center;opacity:0;}
-  .splat.show{opacity:1;animation:splat 700ms ease-out forwards}
-  @keyframes splat{0%{transform:scale(0.5) rotate(0deg);opacity:1}100%{transform:scale(1.6) rotate(12deg);opacity:0}}
-
+  .grid{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:14px}
+  .col{padding:10px}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  textarea{width:100%;min-height:160px;padding:12px;border-radius:8px;border:1px solid rgba(2,6,23,0.06);resize:vertical;font-size:15px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  button,select,input{padding:8px 10px;border-radius:8px;border:1px solid rgba(2,6,23,0.06);background:white;cursor:pointer}
+  button.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:white;border:0;font-weight:700}
+  .outputs{display:flex;flex-direction:column;gap:10px}
+  .out{background:#fbfdff;border:1px solid rgba(2,6,23,0.04);padding:10px;border-radius:8px;min-height:44px;display:flex;align-items:center;justify-content:space-between}
+  .out .text{flex:1;padding-right:12px;word-break:break-word}
+  .small{font-size:13px;color:var(--muted)}
+  .preview{margin-top:12px;padding:12px;border-radius:8px;background:linear-gradient(180deg,#ffffff,#fbfdff);border:1px solid rgba(2,6,23,0.04)}
   footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
-
-  /* small mobile tweaks */
-  @media (max-width:640px){.stage{height:420px}}
+  .kw{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(2,6,23,0.04);margin-right:6px}
+  .inline-actions{display:flex;gap:8px}
+  @media (max-width:980px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-  <div class="app">
+  <div class="wrap">
     <div class="card">
       <header>
-        <h1>Roaming Insects — Mosquito, Spider & Bugs</h1>
-        <div class="controls">
-          <label style="font-size:13px;color:var(--muted);margin-right:6px">Speed</label>
-          <input id="speedRange" type="range" min="0.2" max="3" step="0.1" value="1" title="Global speed multiplier">
-          <button id="addBtn">Add insect</button>
-          <select id="presetSelect" class="ghost" title="Add a preset insect">
-            <option value="mosquito">Mosquito</option>
-            <option value="spider">Spider</option>
-            <option value="beetle">Beetle</option>
-            <option value="random">Random</option>
-          </select>
-          <button id="clearBtn" class="ghost">Clear</button>
+        <div>
+          <h1>LinkedIn Text Styler</h1>
+          <p class="lead">Convert plain text into bold, italic, monospace, small-caps and other Unicode-styles suitable for LinkedIn posts. Copy and paste directly into your post editor.</p>
         </div>
+        <div class="small">Client-side • No tracking</div>
       </header>
 
-      <main>
-        <section class="stage" id="stage" aria-label="Insect stage">
-          <div class="hud">Press / Click an insect to squash it — press <kbd>Esc</kbd> to clear.</div>
-        </section>
-      </main>
+      <div class="grid">
+        <div class="col">
+          <label for="input">Your text</label>
+          <textarea id="input" placeholder="Write your post or headline here..."></textarea>
+          <div class="controls">
+            <button id="clearBtn" class="ghost">Clear</button>
+            <button id="copyAll" class="ghost">Copy original</button>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+              <label class="small">Auto-preview <input id="auto" type="checkbox" checked /></label>
+            </div>
+          </div>
 
-      <footer>Made for fun — client-side only. No downloads, no tracking.</footer>
+          <div style="margin-top:12px">
+            <label class="small">Transform options</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <select id="preset">
+                <option value="none">— Preset —</option>
+                <option value="heading">Heading (Bolder)</option>
+                <option value="announce">Announcement</option>
+                <option value="cta">Call-to-action</option>
+              </select>
+              <button id="toAll" class="primary">Generate all styles</button>
+              <button id="downloadBtn">Download .txt</button>
+            </div>
+          </div>
+
+          <div class="preview" id="preview">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="small">Live Preview</div>
+              <div class="small" id="counts">Words: 0 • Chars: 0</div>
+            </div>
+            <div id="previewText" style="margin-top:10px;font-size:16px;color:#0f1724;min-height:48px">Paste text to see preview</div>
+          </div>
+        </div>
+
+        <aside class="col">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>Styles</strong><div class="small">Click the Copy icon to copy a style.</div></div>
+            <div class="small">Supports many alphabets; unsupported chars are left as-is.</div>
+          </div>
+
+          <div class="outputs" id="outputs" style="margin-top:10px">
+            <!-- outputs inserted by JS -->
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="small">Useful extras</div>
+            <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+              <button id="underlineBtn">Underline (combining)</button>
+              <button id="strikeBtn">Strikethrough (combining)</button>
+              <button id="emojiBtn">Add emojis & bullets</button>
+              <button id="cleanBtn">Strip fancy → plain text</button>
+            </div>
+          </div>
+
+        </aside>
+      </div>
+
+      <footer>Tip: LinkedIn supports Unicode-styled characters (used here). Always preview before posting to ensure readability and accessibility.</footer>
     </div>
   </div>
 
-  <template id="mosquito-tpl">
-    <svg viewBox="0 0 64 64" class="body" xmlns="http://www.w3.org/2000/svg">
-      <g>
-        <ellipse cx="34" cy="30" rx="10" ry="7" fill="#1f2937"/>
-        <path d="M15 12c6 6 18 6 26 0" stroke="#111827" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M44 18c6 2 12-2 14-6" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <rect x="8" y="28" width="28" height="2" rx="1" fill="#0f1724" transform="rotate(-15 8 28)"/>
-      </g>
-    </svg>
-  </template>
-
-  <template id="spider-tpl">
-    <svg viewBox="0 0 64 64" class="body" xmlns="http://www.w3.org/2000/svg">
-      <g>
-        <circle cx="32" cy="28" r="8" fill="#0f1724"/>
-        <circle cx="32" cy="36" r="6" fill="#111827"/>
-        <!-- legs -->
-        <path d="M10 20 L20 26" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-        <path d="M54 20 L44 26" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-        <path d="M10 44 L20 38" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-        <path d="M54 44 L44 38" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-      </g>
-    </svg>
-  </template>
-
-  <template id="beetle-tpl">
-    <svg viewBox="0 0 64 64" class="body" xmlns="http://www.w3.org/2000/svg">
-      <g>
-        <ellipse cx="32" cy="32" rx="12" ry="10" fill="#0f1724" />
-        <rect x="28" y="18" width="8" height="6" rx="3" fill="#111827" />
-        <path d="M20 36c6 0 6-8 12-8s6 8 12 8" stroke="#111827" stroke-width="2" fill="none" stroke-linecap="round"/>
-      </g>
-    </svg>
-  </template>
-
 <script>
-// Roaming insects script
-(function(){
-  const stage = document.getElementById('stage');
-  const speedRange = document.getElementById('speedRange');
-  const addBtn = document.getElementById('addBtn');
-  const clearBtn = document.getElementById('clearBtn');
-  const presetSelect = document.getElementById('presetSelect');
+// Text style mappings
+const maps = {
+  bold: {
+    upper: '𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭'.split(''),
+    lower: '𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝗳𝗳𝗽𝗾𝗿𝗿𝗳'.split('') // fallback replaced below
+  },
+};
+// We'll define mapping programmatically for reliability
+const baseUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const baseLower = 'abcdefghijklmnopqrstuvwxyz';
 
-  // config
-  const CONFIG = {
-    insectTypes: ['mosquito','spider','beetle'],
-    baseCount: 6,
-  };
+// Unicode blocks for common styles (letters only); if missing fallback to original
+const unicodeSets = {
+  bold: {upperStart:0x1D400, lowerStart:0x1D41A}, // Mathematical Bold
+  italic: {upperStart:0x1D434, lowerStart:0x1D44E}, // Mathematical Italic
+  boldItalic: {upperStart:0x1D468, lowerStart:0x1D482},
+  script: {upperStart:0x1D49C, lowerStart:0x1D4B6},
+  boldScript: {upperStart:0x1D4D0, lowerStart:0x1D4EA},
+  fraktur: {upperStart:0x1D504, lowerStart:0x1D51E},
+  double: {upperStart:0x1D538, lowerStart:0x1D552},
+  sans: {upperStart:0x1D5A0, lowerStart:0x1D5BA},
+  mono: {upperStart:0x1D670, lowerStart:0x1D68A},
+  smallcaps: null // handled separately
+};
 
-  let insects = new Map();
-  let nextId = 1;
-  let globalSpeed = parseFloat(speedRange.value) || 1;
-  let animHandle = null;
-
-  // utilities
-  function rand(min,max){return Math.random()*(max-min)+min}
-  function randInt(min,max){return Math.floor(rand(min,max+1))}
-
-  function createInsect(type,opts={}){
-    const id = nextId++;
-    const el = document.createElement('div');
-    el.className = 'insect size-md';
-    el.dataset.id = id;
-    el.dataset.type = type;
-
-    // pick size classes
-    const sizeRoll = Math.random();
-    if(sizeRoll < 0.22) el.classList.add('size-sm');
-    else if(sizeRoll > 0.78) el.classList.add('size-lg');
-
-    // append SVG from template
-    const tpl = document.getElementById(type+'-tpl') || document.getElementById('beetle-tpl');
-    el.appendChild(tpl.content.cloneNode(true));
-
-    // initial physics
-    const rect = stage.getBoundingClientRect();
-    const state = {
-      id, el, type,
-      x: rand(10, rect.width-60),
-      y: rand(10, rect.height-60),
-      vx: rand(-0.6,0.6),
-      vy: rand(-0.6,0.6),
-      speed: rand(0.4,1.2),
-      angle: 0,
-      alive: true,
-      lastChange: Date.now(),
-      wobble: rand(0.002,0.01)
-    };
-
-    // set initial transform
-    el.style.transform = `translate(${state.x}px, ${state.y}px) rotate(0deg)`;
-
-    // event handlers
-    el.addEventListener('pointerdown', (e)=>{
-      e.stopPropagation();
-      squash(state);
-    });
-
-    stage.appendChild(el);
-    insects.set(id, state);
-    return state;
+function transformUnicode(text, set){
+  if(!unicodeSets[set]) return text;
+  const setDef = unicodeSets[set];
+  let out = '';
+  for(const ch of text){
+    const idxU = baseUpper.indexOf(ch);
+    const idxL = baseLower.indexOf(ch);
+    if(idxU >= 0 && setDef.upperStart){
+      const code = setDef.upperStart + idxU;
+      out += String.fromCodePoint(code);
+    } else if(idxL >= 0 && setDef.lowerStart){
+      const code = setDef.lowerStart + idxL;
+      out += String.fromCodePoint(code);
+    } else if(idxU >= 0 && setDef.lowerStart){
+      // some sets only define lower-start; fallback handling
+      out += String.fromCodePoint(setDef.lowerStart + idxU);
+    } else {
+      out += ch;
+    }
   }
+  return out;
+}
 
-  function squash(state){
-    if(!state.alive) return;
-    state.alive = false;
-    const el = state.el;
-    el.classList.add('dead');
-    // show splat
-    const splat = document.createElement('div');
-    splat.className = 'splat show';
-    splat.innerHTML = `<svg viewBox="0 0 40 40" width="40" height="40"><g><circle cx="20" cy="20" r="12" fill="#ef4444"/><circle cx="14" cy="16" r="3" fill="#b91c1c"/><circle cx="26" cy="22" r="2" fill="#b91c1c"/></g></svg>`;
-    splat.style.left = `${state.x}px`;
-    splat.style.top = `${state.y}px`;
-    stage.appendChild(splat);
-    setTimeout(()=>splat.remove(),800);
+// small-caps: map a-z to Unicode small caps where available
+const smallCapsMap = {
+  a:'ᴀ',b:'ʙ',c:'ᴄ',d:'ᴅ',e:'ᴇ',f:'ꜰ',g:'ɢ',h:'ʜ',i:'ɪ',j:'ᴊ',k:'ᴋ',l:'ʟ',m:'ᴍ',n:'ɴ',o:'ᴏ',p:'ᴘ',q:'ϙ',r:'ʀ',s:'s',t:'ᴛ',u:'ᴜ',v:'ᴠ',w:'ᴡ',x:'x',y:'ʏ',z:'ᴢ'
+};
 
-    // small fade out then remove
-    el.animate([{transform: `translate(${state.x}px, ${state.y}px) rotate(0deg) scale(1)`},{transform: `translate(${state.x}px, ${state.y}px) rotate(12deg) scale(0.9)`}],{duration:700,easing:'ease-out'});
+// combining characters
+const COMBINING_UNDER = '\u0332';
+const COMBINING_STRIKE = '\u0336';
+
+// utilities
+function toSmallCaps(text){
+  return text.split('').map(c=>{
+    const lower = c.toLowerCase(); return smallCapsMap[lower] || c; }).join('');
+}
+
+function applyCombining(text, comb){
+  return text.split('').map(ch=> ch + comb).join('');
+}
+
+// safe transform function that handles many scripts by mapping only ASCII letters
+function transform(text, style){
+  if(!text) return '';
+  switch(style){
+    case 'bold': return transformUnicode(text, 'bold');
+    case 'italic': return transformUnicode(text, 'italic');
+    case 'boldItalic': return transformUnicode(text, 'boldItalic');
+    case 'script': return transformUnicode(text, 'script');
+    case 'fraktur': return transformUnicode(text, 'fraktur');
+    case 'double': return transformUnicode(text, 'double');
+    case 'mono': return transformUnicode(text, 'mono');
+    case 'sans': return transformUnicode(text, 'sans');
+    case 'smallcaps': return toSmallCaps(text);
+    case 'underline': return applyCombining(text, COMBINING_UNDER);
+    case 'strike': return applyCombining(text, COMBINING_STRIKE);
+    default: return text;
   }
+}
 
-  function removeAll(){
-    insects.forEach(s=>{ if(s.el && s.el.parentNode) s.el.parentNode.removeChild(s.el); });
-    insects.clear();
-  }
+// List of styles to show
+const STYLE_LIST = [
+  {id:'bold', label:'Bold'},
+  {id:'italic', label:'Italic'},
+  {id:'boldItalic', label:'Bold Italic'},
+  {id:'script', label:'Script'},
+  {id:'fraktur', label:'Fraktur'},
+  {id:'double', label:'Double-struck'},
+  {id:'sans', label:'Sans-serif'},
+  {id:'mono', label:'Monospace'},
+  {id:'smallcaps', label:'Small caps'}
+];
 
-  // movement: wandering with occasional target changes, repel each other slightly
-  function tick(dt){
-    const rect = stage.getBoundingClientRect();
-    insects.forEach(state=>{
-      if(!state.alive) return; // dead insects stay put (faded)
+// DOM
+const input = document.getElementById('input');
+const outputs = document.getElementById('outputs');
+const previewText = document.getElementById('previewText');
+const counts = document.getElementById('counts');
+const auto = document.getElementById('auto');
+const clearBtn = document.getElementById('clearBtn');
+const copyAll = document.getElementById('copyAll');
+const toAll = document.getElementById('toAll');
+const preset = document.getElementById('preset');
+const downloadBtn = document.getElementById('downloadBtn');
+const underlineBtn = document.getElementById('underlineBtn');
+const strikeBtn = document.getElementById('strikeBtn');
+const emojiBtn = document.getElementById('emojiBtn');
+const cleanBtn = document.getElementById('cleanBtn');
 
-      // random steering
-      if(Date.now() - state.lastChange > rand(700,3000)){
-        state.vx += rand(-0.6,0.6) * 0.6;
-        state.vy += rand(-0.6,0.6) * 0.6;
-        state.vx = Math.max(Math.min(state.vx, 2), -2);
-        state.vy = Math.max(Math.min(state.vy, 2), -2);
-        state.lastChange = Date.now();
-      }
+function makeOutputRow(styleId, label, text){
+  const row = document.createElement('div'); row.className='out';
+  const left = document.createElement('div'); left.className='text'; left.textContent = text || '';
+  const right = document.createElement('div'); right.className='inline-actions';
+  const copy = document.createElement('button'); copy.textContent='Copy';
+  copy.addEventListener('click', ()=>{ navigator.clipboard?.writeText(left.textContent).then(()=>{ copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',900); }).catch(()=>{ prompt('Copy this text', left.textContent); }); });
+  const use = document.createElement('button'); use.textContent='Use';
+  use.addEventListener('click', ()=>{ input.value = left.textContent; updateAll(); });
+  right.appendChild(use); right.appendChild(copy);
+  row.appendChild(left); row.appendChild(right);
+  return row;
+}
 
-      // slight attraction/avoid cursor (subtle) - optional
-      // apply boundaries (wrap-around)
-      state.x += state.vx * state.speed * dt * globalSpeed;
-      state.y += state.vy * state.speed * dt * globalSpeed;
-
-      if(state.x < -30) state.x = rect.width+10;
-      if(state.y < -30) state.y = rect.height+10;
-      if(state.x > rect.width+30) state.x = -10;
-      if(state.y > rect.height+30) state.y = -10;
-
-      // rotation based on velocity
-      const ang = Math.atan2(state.vy, state.vx) * 180/Math.PI;
-      state.angle += (ang - state.angle) * 0.15; // smooth
-      // wobble
-      const wob = Math.sin(Date.now()*state.wobble)*10;
-
-      state.el.style.transform = `translate(${state.x}px, ${state.y}px) rotate(${state.angle + wob}deg)`;
-    });
-  }
-
-  // animation loop
-  let last = performance.now();
-  function animate(now){
-    const dt = Math.min(40, now - last) / 16.67; // normalize to ~60fps
-    tick(dt);
-    last = now;
-    animHandle = requestAnimationFrame(animate);
-  }
-
-  // init
-  function init(){
-    // base insects
-    for(let i=0;i<CONFIG.baseCount;i++) createInsect(CONFIG.insectTypes[i % CONFIG.insectTypes.length]);
-    animate(performance.now());
-  }
-
-  // UI bindings
-  addBtn.addEventListener('click', ()=>{
-    const preset = presetSelect.value;
-    const type = preset === 'random' ? CONFIG.insectTypes[randInt(0, CONFIG.insectTypes.length-1)] : preset;
-    createInsect(type || 'mosquito');
+function updateAll(){
+  const txt = input.value;
+  previewText.textContent = txt || 'Paste text to see preview';
+  const words = txt.trim() ? txt.trim().split(/\s+/).length : 0;
+  counts.textContent = `Words: ${words} • Chars: ${txt.length}`;
+  if(!auto.checked) return;
+  outputs.innerHTML = '';
+  STYLE_LIST.forEach(s=>{
+    const styled = transform(txt, s.id);
+    outputs.appendChild(makeOutputRow(s.id, s.label, styled));
   });
+}
 
-  clearBtn.addEventListener('click', ()=>{
-    removeAll();
-  });
+input.addEventListener('input', updateAll);
+clearBtn.addEventListener('click', ()=>{ input.value=''; updateAll(); input.focus(); });
+copyAll.addEventListener('click', ()=>{
+  const txt = input.value; if(!txt){ alert('Nothing to copy.'); return; }
+  navigator.clipboard?.writeText(txt).then(()=>alert('Original text copied.'), ()=>prompt('Copy this text', txt));
+});
 
-  speedRange.addEventListener('input', ()=>{
-    globalSpeed = parseFloat(speedRange.value);
-  });
+toAll.addEventListener('click', ()=>{ updateAll(); alert('All styles generated below — click Copy on any style to copy it.'); });
 
-  // clicking on stage spawns a bug near pointer
-  stage.addEventListener('pointerdown', (e)=>{
-    const type = CONFIG.insectTypes[randInt(0, CONFIG.insectTypes.length-1)];
-    const state = createInsect(type);
-    // place at pointer
-    const rect = stage.getBoundingClientRect();
-    state.x = e.clientX - rect.left - 12;
-    state.y = e.clientY - rect.top - 12;
-    state.vx = rand(-0.6,0.6); state.vy = rand(-0.6,0.6);
-    // small pop
-    state.el.animate([{transform:`translate(${state.x}px, ${state.y}px) scale(0.6) rotate(0deg)`},{transform:`translate(${state.x}px, ${state.y}px) scale(1) rotate(0deg)`}],{duration:260,easing:'cubic-bezier(.2,.85,.2,1)'});
-  });
+preset.addEventListener('change', ()=>{
+  const p = preset.value; if(p==='none') return;
+  const base = input.value.trim() || 'We help teams ship better software — faster.';
+  let res='';
+  if(p==='heading') res = transform(base.toUpperCase(), 'bold');
+  else if(p==='announce') res = transform('🚀 ' + base, 'boldItalic');
+  else if(p==='cta') res = transform(base + '\n\nLearn more →', 'smallcaps');
+  input.value = res; updateAll(); preset.value='none';
+});
 
-  // keyboard clear
-  window.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape') removeAll();
-  });
+downloadBtn.addEventListener('click', ()=>{
+  const content = input.value || '';
+  if(!content){ alert('Nothing to download.'); return; }
+  const blob = new Blob([content], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'linkedin-text.txt'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
 
-  // make the stage responsive to resize
-  window.addEventListener('resize', ()=>{/* positions remain relative; no-op */});
+underlineBtn.addEventListener('click', ()=>{
+  const out = applyCombining(input.value || '', COMBINING_UNDER);
+  navigator.clipboard?.writeText(out).then(()=>alert('Underlined text copied.'), ()=>prompt('Copy underlined text', out));
+});
+strikeBtn.addEventListener('click', ()=>{
+  const out = applyCombining(input.value || '', COMBINING_STRIKE);
+  navigator.clipboard?.writeText(out).then(()=>alert('Strikethrough text copied.'), ()=>prompt('Copy struck text', out));
+});
 
-  // start
-  init();
-})();
+emojiBtn.addEventListener('click', ()=>{
+  const txt = input.value || '';
+  if(!txt){ alert('Write something first to add emojis.'); return; }
+  const bullets = txt.split('\n').map(line=> line.trim() ? '• ' + line : '').join('\n');
+  const out = '✅ ' + bullets;
+  navigator.clipboard?.writeText(out).then(()=>alert('Text with bullets & emoji copied.'), ()=>prompt('Copy text with emojis', out));
+});
+
+cleanBtn.addEventListener('click', ()=>{
+  // remove common combining marks and fancy ranges by normalizing
+  const txt = input.value || '';
+  const cleaned = txt.normalize('NFKD').replace(/\p{M}/gu, '').replace(/[\u{1D400}-\u{1F9FF}]/gu, (c)=>c).replace(/[\u0332\u0336]/g,'');
+  // Note: some fancy letters are separate codepoints; we attempt transliteration by using an indexed map where possible
+  // For now, offer the user the cleaned (diacritics stripped) text
+  input.value = cleaned;
+  updateAll();
+  alert('Attempted to strip combining marks and diacritics. Some styled letters may remain — paste into a plain editor to check.');
+});
+
+// initial render
+updateAll();
+
+// accessibility shortcuts
+window.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ updateAll(); alert('Generated styles — scroll to the right panel to copy.'); } });
+
 </script>
 </body>
 </html>
