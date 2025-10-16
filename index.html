@@ -1,223 +1,293 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Totally Serious Update — Do Not Close</title>
-  <style>
-    :root{--bg:#0f1724;--accent:#06b6d4;--muted:#94a3b8}
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
-    body{background:linear-gradient(180deg,#071029 0%, #0f1724 60%);color:#e6eef6;display:flex;align-items:center;justify-content:center}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Roaming Insects — Mosquito, Spider & Bugs</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#0f1724; --muted:#9aa6b2; --accent:#22c55e;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#e6eef6;background:linear-gradient(180deg,#071026 0%, #0b1220 100%)}
+  .app{min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:28px}
+  .card{width:1000px;max-width:96%;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 12px 40px rgba(2,6,23,0.6)}
+  header{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px}
+  h1{font-size:18px;margin:0}
+  .controls{display:flex;gap:8px;align-items:center}
+  .controls button, .controls input, .controls select{padding:8px 10px;border-radius:8px;border:0;background:#0b2540;color:#e6eef6;cursor:pointer}
+  .controls .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
 
-    .card{width:880px;max-width:94%;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.04);padding:28px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+  .stage{position:relative;height:560px;border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#061426,#05111a);border:1px solid rgba(255,255,255,0.03)}
+  .hud{position:absolute;left:12px;top:12px;background:rgba(0,0,0,0.25);padding:8px;border-radius:8px;color:var(--muted);font-size:13px}
 
-    h1{margin:0 0 8px;font-size:20px;letter-spacing:-0.02em}
-    p.lead{margin:0 0 18px;color:var(--muted)}
+  /* insect base style */
+  .insect{position:absolute;will-change:transform,opacity;transform-origin:center center;user-select:none}
+  .insect .body{display:block}
+  .insect.dead{opacity:0.35;filter:grayscale(60%);pointer-events:none}
 
-    .controls{display:flex;gap:12px}
-    button{background:var(--accent);border:0;padding:10px 14px;border-radius:8px;color:#062023;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(6,182,212,0.12)}
-    button.ghost{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04);font-weight:600}
+  /* simple SVG sizes */
+  .insect.size-sm{width:26px;height:26px}
+  .insect.size-md{width:40px;height:40px}
+  .insect.size-lg{width:56px;height:56px}
 
-    .preview{margin-top:18px;display:grid;grid-template-columns:1fr 160px;gap:18px}
-    .screen{background:#071426;border-radius:8px;padding:18px;color:#dff6fb;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-    .side{background:rgba(255,255,255,0.02);border-radius:8px;padding:12px;font-size:13px;color:var(--muted)}
+  /* splat animation */
+  .splat{position:absolute;pointer-events:none;transform-origin:center center;opacity:0;}
+  .splat.show{opacity:1;animation:splat 700ms ease-out forwards}
+  @keyframes splat{0%{transform:scale(0.5) rotate(0deg);opacity:1}100%{transform:scale(1.6) rotate(12deg);opacity:0}}
 
-    /* full-screen prank overlay */
-    .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 20% 20%, rgba(0,0,0,0.6), rgba(2,6,23,0.95));backdrop-filter:blur(2px);z-index:1000;visibility:hidden;opacity:0;transition:opacity .25s ease, visibility .25s}
-    .overlay.show{visibility:visible;opacity:1}
-    .overlay .panel{width:720px;max-width:95%;background:#071026;padding:26px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);text-align:center}
-    .panel h2{margin:0 0 8px}
-    .panel p{margin:0 0 18px}
+  footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
 
-    /* confetti */
-    .confetti{position:fixed;inset:0;pointer-events:none;z-index:1100}
-    .confetti-piece{position:absolute;width:12px;height:20px;opacity:0;transform-origin:center;}
-
-    /* playful cursor follower */
-    .follower{position:fixed;pointer-events:none;width:56px;height:56px;border-radius:999px;background:linear-gradient(135deg,#ffd166,#ff6b6b);display:flex;align-items:center;justify-content:center;font-size:28px;transform:translate(-50%,-50%) scale(0.9);transition:transform .08s linear;z-index:1200}
-
-    footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
-  </style>
+  /* small mobile tweaks */
+  @media (max-width:640px){.stage{height:420px}}
+</style>
 </head>
 <body>
-  <div class="card" role="main">
-    <h1>Critical Browser Update</h1>
-    <p class="lead">Your browser needs an <strong>urgent</strong> update to display this page correctly. (Trust us.)</p>
+  <div class="app">
+    <div class="card">
+      <header>
+        <h1>Roaming Insects — Mosquito, Spider & Bugs</h1>
+        <div class="controls">
+          <label style="font-size:13px;color:var(--muted);margin-right:6px">Speed</label>
+          <input id="speedRange" type="range" min="0.2" max="3" step="0.1" value="1" title="Global speed multiplier">
+          <button id="addBtn">Add insect</button>
+          <select id="presetSelect" class="ghost" title="Add a preset insect">
+            <option value="mosquito">Mosquito</option>
+            <option value="spider">Spider</option>
+            <option value="beetle">Beetle</option>
+            <option value="random">Random</option>
+          </select>
+          <button id="clearBtn" class="ghost">Clear</button>
+        </div>
+      </header>
 
-    <div class="controls">
-      <button id="start-btn">Install Update</button>
-      <button class="ghost" id="preview-btn">Preview what's inside</button>
-    </div>
+      <main>
+        <section class="stage" id="stage" aria-label="Insect stage">
+          <div class="hud">Press / Click an insect to squash it — press <kbd>Esc</kbd> to clear.</div>
+        </section>
+      </main>
 
-    <div class="preview" aria-hidden="false">
-      <div class="screen" id="screen">
-        <strong style="font-size:18px">Update Status</strong>
-        <div id="status" style="margin-top:12px;color:var(--muted)">Idle — waiting for user action</div>
-      </div>
-      <div class="side">
-        <strong>What happens</strong>
-        <ul style="padding-left:18px;margin:10px 0 0 0;color:var(--muted)">
-          <li>Nice animation</li>
-          <li>A little surprise</li>
-          <li>Everything is completely harmless</li>
-        </ul>
-      </div>
-    </div>
-
-    <footer>Tip: this prank is safe — it only uses HTML, CSS & JavaScript in your browser. No files are downloaded.</footer>
-  </div>
-
-  <!-- overlay triggered by the prank -->
-  <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="panel">
-      <h2 id="overlay-title">Installing update…</h2>
-      <p id="overlay-sub">Please do not close this window.</p>
-      <div id="progress" style="height:14px;background:rgba(255,255,255,0.03);border-radius:8px;margin:18px 0;overflow:hidden">
-        <div id="bar" style="height:100%;width:0;background:linear-gradient(90deg,#06b6d4,#60a5fa);transition:width 0.2s"></div>
-      </div>
-      <div style="display:flex;gap:10px;justify-content:center">
-        <button id="finish-btn" style="display:none">Finish</button>
-        <button class="ghost" id="close-btn">Cancel (restore)</button>
-      </div>
+      <footer>Made for fun — client-side only. No downloads, no tracking.</footer>
     </div>
   </div>
 
-  <div class="confetti" id="confetti"></div>
-  <div class="follower" id="follower" aria-hidden="true">🎉</div>
+  <template id="mosquito-tpl">
+    <svg viewBox="0 0 64 64" class="body" xmlns="http://www.w3.org/2000/svg">
+      <g>
+        <ellipse cx="34" cy="30" rx="10" ry="7" fill="#1f2937"/>
+        <path d="M15 12c6 6 18 6 26 0" stroke="#111827" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M44 18c6 2 12-2 14-6" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <rect x="8" y="28" width="28" height="2" rx="1" fill="#0f1724" transform="rotate(-15 8 28)"/>
+      </g>
+    </svg>
+  </template>
 
-  <script>
-    // small utility
-    const $ = sel => document.querySelector(sel);
+  <template id="spider-tpl">
+    <svg viewBox="0 0 64 64" class="body" xmlns="http://www.w3.org/2000/svg">
+      <g>
+        <circle cx="32" cy="28" r="8" fill="#0f1724"/>
+        <circle cx="32" cy="36" r="6" fill="#111827"/>
+        <!-- legs -->
+        <path d="M10 20 L20 26" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+        <path d="M54 20 L44 26" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+        <path d="M10 44 L20 38" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+        <path d="M54 44 L44 38" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </template>
 
-    const startBtn = $('#start-btn');
-    const previewBtn = $('#preview-btn');
-    const overlay = $('#overlay');
-    const status = $('#status');
-    const bar = $('#bar');
-    const finishBtn = $('#finish-btn');
-    const closeBtn = $('#close-btn');
-    const confettiRoot = $('#confetti');
-    const follower = $('#follower');
+  <template id="beetle-tpl">
+    <svg viewBox="0 0 64 64" class="body" xmlns="http://www.w3.org/2000/svg">
+      <g>
+        <ellipse cx="32" cy="32" rx="12" ry="10" fill="#0f1724" />
+        <rect x="28" y="18" width="8" height="6" rx="3" fill="#111827" />
+        <path d="M20 36c6 0 6-8 12-8s6 8 12 8" stroke="#111827" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </template>
 
-    let running = false;
+<script>
+// Roaming insects script
+(function(){
+  const stage = document.getElementById('stage');
+  const speedRange = document.getElementById('speedRange');
+  const addBtn = document.getElementById('addBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const presetSelect = document.getElementById('presetSelect');
 
-    function random(min,max){return Math.random()*(max-min)+min}
+  // config
+  const CONFIG = {
+    insectTypes: ['mosquito','spider','beetle'],
+    baseCount: 6,
+  };
 
-    function spawnConfetti(count=80){
-      confettiRoot.innerHTML='';
-      for(let i=0;i<count;i++){
-        const el = document.createElement('div');
-        el.className='confetti-piece';
-        el.style.left = random(0,100)+'%';
-        el.style.top = '-10%';
-        el.style.background = `hsl(${Math.floor(random(0,360))}deg 90% 60%)`;
-        el.style.transform = `rotate(${random(0,360)}deg)`;
-        el.style.opacity = random(0.8,1);
-        const dur = random(2000,4200);
-        el.animate([
-          {transform: `translateY(0) rotate(${random(0,360)}deg)`, opacity:1},
-          {transform: `translateY(120vh) rotate(${random(360,720)}deg)`, opacity:0.85}
-        ],{duration:dur, easing:'cubic-bezier(.2,.8,.2,1)'});
-        confettiRoot.appendChild(el);
+  let insects = new Map();
+  let nextId = 1;
+  let globalSpeed = parseFloat(speedRange.value) || 1;
+  let animHandle = null;
+
+  // utilities
+  function rand(min,max){return Math.random()*(max-min)+min}
+  function randInt(min,max){return Math.floor(rand(min,max+1))}
+
+  function createInsect(type,opts={}){
+    const id = nextId++;
+    const el = document.createElement('div');
+    el.className = 'insect size-md';
+    el.dataset.id = id;
+    el.dataset.type = type;
+
+    // pick size classes
+    const sizeRoll = Math.random();
+    if(sizeRoll < 0.22) el.classList.add('size-sm');
+    else if(sizeRoll > 0.78) el.classList.add('size-lg');
+
+    // append SVG from template
+    const tpl = document.getElementById(type+'-tpl') || document.getElementById('beetle-tpl');
+    el.appendChild(tpl.content.cloneNode(true));
+
+    // initial physics
+    const rect = stage.getBoundingClientRect();
+    const state = {
+      id, el, type,
+      x: rand(10, rect.width-60),
+      y: rand(10, rect.height-60),
+      vx: rand(-0.6,0.6),
+      vy: rand(-0.6,0.6),
+      speed: rand(0.4,1.2),
+      angle: 0,
+      alive: true,
+      lastChange: Date.now(),
+      wobble: rand(0.002,0.01)
+    };
+
+    // set initial transform
+    el.style.transform = `translate(${state.x}px, ${state.y}px) rotate(0deg)`;
+
+    // event handlers
+    el.addEventListener('pointerdown', (e)=>{
+      e.stopPropagation();
+      squash(state);
+    });
+
+    stage.appendChild(el);
+    insects.set(id, state);
+    return state;
+  }
+
+  function squash(state){
+    if(!state.alive) return;
+    state.alive = false;
+    const el = state.el;
+    el.classList.add('dead');
+    // show splat
+    const splat = document.createElement('div');
+    splat.className = 'splat show';
+    splat.innerHTML = `<svg viewBox="0 0 40 40" width="40" height="40"><g><circle cx="20" cy="20" r="12" fill="#ef4444"/><circle cx="14" cy="16" r="3" fill="#b91c1c"/><circle cx="26" cy="22" r="2" fill="#b91c1c"/></g></svg>`;
+    splat.style.left = `${state.x}px`;
+    splat.style.top = `${state.y}px`;
+    stage.appendChild(splat);
+    setTimeout(()=>splat.remove(),800);
+
+    // small fade out then remove
+    el.animate([{transform: `translate(${state.x}px, ${state.y}px) rotate(0deg) scale(1)`},{transform: `translate(${state.x}px, ${state.y}px) rotate(12deg) scale(0.9)`}],{duration:700,easing:'ease-out'});
+  }
+
+  function removeAll(){
+    insects.forEach(s=>{ if(s.el && s.el.parentNode) s.el.parentNode.removeChild(s.el); });
+    insects.clear();
+  }
+
+  // movement: wandering with occasional target changes, repel each other slightly
+  function tick(dt){
+    const rect = stage.getBoundingClientRect();
+    insects.forEach(state=>{
+      if(!state.alive) return; // dead insects stay put (faded)
+
+      // random steering
+      if(Date.now() - state.lastChange > rand(700,3000)){
+        state.vx += rand(-0.6,0.6) * 0.6;
+        state.vy += rand(-0.6,0.6) * 0.6;
+        state.vx = Math.max(Math.min(state.vx, 2), -2);
+        state.vy = Math.max(Math.min(state.vy, 2), -2);
+        state.lastChange = Date.now();
       }
-      // remove after animation
-      setTimeout(()=>confettiRoot.innerHTML=' ',4500);
-    }
 
-    // playful sound using WebAudio
-    function toneSequence(){
-      try{
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const now = ctx.currentTime;
-        const freqs = [660,740,880,990,880];
-        freqs.forEach((f,i)=>{
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.type='sine'; o.frequency.value = f;
-          g.gain.value = 0.02;
-          o.connect(g); g.connect(ctx.destination);
-          o.start(now + i*0.08);
-          o.stop(now + i*0.08 + 0.12);
-        });
-      }catch(e){/* ignore */}
-    }
+      // slight attraction/avoid cursor (subtle) - optional
+      // apply boundaries (wrap-around)
+      state.x += state.vx * state.speed * dt * globalSpeed;
+      state.y += state.vy * state.speed * dt * globalSpeed;
 
-    function showOverlay(){
-      overlay.classList.add('show');
-      overlay.setAttribute('aria-hidden','false');
-      status.textContent = 'Installing update — please wait';
-      let pct = 0;
-      bar.style.width = '0%';
-      running = true;
-      const iv = setInterval(()=>{
-        pct += Math.floor(random(4,12));
-        if(pct>=100){pct=100;bar.style.width='100%';clearInterval(iv);
-          // short dramatic pause then reveal
-          setTimeout(()=>{
-            $('#overlay-title').textContent = 'All done!';
-            $('#overlay-sub').textContent = 'Thanks for updating. One last step remains.';
-            finishBtn.style.display = 'inline-block';
-            spawnConfetti(120);
-            toneSequence();
-          },900);
-        } else {
-          bar.style.width = pct + '%';
-          // small pop
-          if(Math.random()<0.3) toneSequence();
-        }
-      },420);
-    }
+      if(state.x < -30) state.x = rect.width+10;
+      if(state.y < -30) state.y = rect.height+10;
+      if(state.x > rect.width+30) state.x = -10;
+      if(state.y > rect.height+30) state.y = -10;
 
-    function hideOverlay(){
-      overlay.classList.remove('show');
-      overlay.setAttribute('aria-hidden','true');
-      status.textContent = 'Idle — waiting for user action';
-      bar.style.width = '0%';
-      finishBtn.style.display='none';
-      running=false;
-    }
+      // rotation based on velocity
+      const ang = Math.atan2(state.vy, state.vx) * 180/Math.PI;
+      state.angle += (ang - state.angle) * 0.15; // smooth
+      // wobble
+      const wob = Math.sin(Date.now()*state.wobble)*10;
 
-    startBtn.addEventListener('click',()=>{
-      if(running) return;
-      showOverlay();
+      state.el.style.transform = `translate(${state.x}px, ${state.y}px) rotate(${state.angle + wob}deg)`;
     });
+  }
 
-    previewBtn.addEventListener('click',()=>{
-      alert('Preview mode: nothing dangerous here — just a harmless prank!');
-    });
+  // animation loop
+  let last = performance.now();
+  function animate(now){
+    const dt = Math.min(40, now - last) / 16.67; // normalize to ~60fps
+    tick(dt);
+    last = now;
+    animHandle = requestAnimationFrame(animate);
+  }
 
-    closeBtn.addEventListener('click',hideOverlay);
+  // init
+  function init(){
+    // base insects
+    for(let i=0;i<CONFIG.baseCount;i++) createInsect(CONFIG.insectTypes[i % CONFIG.insectTypes.length]);
+    animate(performance.now());
+  }
 
-    finishBtn.addEventListener('click',()=>{
-      // reveal the surprise
-      $('#overlay-title').textContent = '🎉 You got pranked!';
-      $('#overlay-sub').textContent = 'All in good fun — no data was collected.';
-      spawnConfetti(200);
-      // make the on-screen emoji dance
-      const screen = document.getElementById('screen');
-      screen.innerHTML = `<div style="font-size:44px">🥳</div><div style="margin-top:10px;color:var(--muted)">Share the laugh — or press restore</div>`;
-      finishBtn.style.display='none';
-      closeBtn.textContent = 'Restore page';
-    });
+  // UI bindings
+  addBtn.addEventListener('click', ()=>{
+    const preset = presetSelect.value;
+    const type = preset === 'random' ? CONFIG.insectTypes[randInt(0, CONFIG.insectTypes.length-1)] : preset;
+    createInsect(type || 'mosquito');
+  });
 
-    // playful cursor follower
-    window.addEventListener('pointermove', e=>{
-      follower.style.left = e.clientX + 'px';
-      follower.style.top = e.clientY + 'px';
-      follower.style.transform = 'translate(-50%,-50%) scale(1)';
-      // hide quickly after a while
-      clearTimeout(follower._t);
-      follower._t = setTimeout(()=>{ follower.style.transform='translate(-50%,-50%) scale(0.9)'; },1200);
-    });
+  clearBtn.addEventListener('click', ()=>{
+    removeAll();
+  });
 
-    // keyboard safety: pressing Escape restores everything
-    window.addEventListener('keydown', e=>{
-      if(e.key==='Escape') hideOverlay();
-    });
+  speedRange.addEventListener('input', ()=>{
+    globalSpeed = parseFloat(speedRange.value);
+  });
 
-    // safety note in console so anyone inspecting sees it's harmless
-    console.log('PRANK: This page is a harmless client-side prank — no data leaves your browser.');
-  </script>
+  // clicking on stage spawns a bug near pointer
+  stage.addEventListener('pointerdown', (e)=>{
+    const type = CONFIG.insectTypes[randInt(0, CONFIG.insectTypes.length-1)];
+    const state = createInsect(type);
+    // place at pointer
+    const rect = stage.getBoundingClientRect();
+    state.x = e.clientX - rect.left - 12;
+    state.y = e.clientY - rect.top - 12;
+    state.vx = rand(-0.6,0.6); state.vy = rand(-0.6,0.6);
+    // small pop
+    state.el.animate([{transform:`translate(${state.x}px, ${state.y}px) scale(0.6) rotate(0deg)`},{transform:`translate(${state.x}px, ${state.y}px) scale(1) rotate(0deg)`}],{duration:260,easing:'cubic-bezier(.2,.85,.2,1)'});
+  });
+
+  // keyboard clear
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') removeAll();
+  });
+
+  // make the stage responsive to resize
+  window.addEventListener('resize', ()=>{/* positions remain relative; no-op */});
+
+  // start
+  init();
+})();
+</script>
 </body>
 </html>
